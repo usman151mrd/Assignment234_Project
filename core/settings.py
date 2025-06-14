@@ -210,3 +210,5 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+ACCOUNT_LOGIN_REDIRECT_URL = "api/v1/swagger/"

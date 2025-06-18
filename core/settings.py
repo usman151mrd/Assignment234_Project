@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'jobs.apps.JobsConfig',
     'recommendations.apps.RecommendationsConfig',
     'resume_builder.apps.ResumeBuilderConfig',
+    'dashboard.apps.DashboardConfig',
 ]
 
 MIDDLEWARE = [

@@ -26,7 +26,7 @@ class ResumeTemplate(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        indexes = [GinIndex(fields=['config'])]
+        # indexes = [GinIndex(fields=['config'])]
         ordering = ['-version', 'name']
 
     def __str__(self):

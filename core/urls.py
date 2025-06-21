@@ -26,6 +26,7 @@ web_patterns = [
     path('web/', include('resume_builder.web.urls')),
     path('web/', include('accounts.web.urls')),
     path('', include('dashboard.urls')),
+
 ]
 apis_patterns = [
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),

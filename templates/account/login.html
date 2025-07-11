@@ -65,12 +65,12 @@
                                     {% csrf_token %}
                                     <!--                                    {{ form.as_p }}-->
                                     <div class="col-12">
-                                        <label for="yourUsername" class="form-label">Username</label>
+                                        <label for="yourEmail" class="form-label">Email</label>
                                         <div class="input-group has-validation">
                                             <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                            <input type="text" name="login" class="form-control" id="yourUsername"
+                                            <input type="email" name="login" class="form-control" id="yourEmail"
                                                    required>
-                                            <div class="invalid-feedback">Please enter your username.</div>
+                                            <div class="invalid-feedback">Please enter your email.</div>
                                         </div>
                                     </div>
 

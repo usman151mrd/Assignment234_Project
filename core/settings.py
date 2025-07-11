@@ -184,13 +184,13 @@ SPECTACULAR_SETTINGS = {
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
-    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
-    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
-    'SEND_CONFIRMATION_EMAIL': True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': False,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,
+    'SEND_CONFIRMATION_EMAIL': False,
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_ACTIVATION_EMAIL': False,
 
 }
 AUTH_USER_MODEL = 'accounts.User'
@@ -222,14 +222,41 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = '/web/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 
+# Allauth Configuration
 ACCOUNT_FORMS = {
     'signup': 'accounts.forms.CustomSignupForm',
 }
 
-# Looking to send emails in production? Check out our Email API/SMTP product!
+# Allauth Settings
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Changed from 'mandatory' to 'none'
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_USERNAME_MIN_LENGTH = 3
+ACCOUNT_PASSWORD_MIN_LENGTH = 8
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_CONFIRMATION_HMAC = True
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_LOGOUT_ON_GET = False
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+ACCOUNT_SIGNUP_REDIRECT_URL = '/'
+ACCOUNT_USERNAME_BLACKLIST = ['admin', 'administrator', 'root', 'user', 'test']
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 EMAIL_HOST_USER = 'f0cb0b9d536e42'
 EMAIL_HOST_PASSWORD = '588663c1d79800'
 EMAIL_PORT = '2525'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'noreply@yourdomain.com'
 
+# For development, you can use console backend instead
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

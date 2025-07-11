@@ -50,8 +50,8 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="pt-4 pb-2">
-                                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                                    <p class="text-center small">Enter your credentials to login</p>
+                                    <h5 class="card-title text-center pb-0 fs-4">Create Your Account</h5>
+                                    <p class="text-center small">Enter your details to create an account</p>
                                 </div>
 
                                 {% if form.errors %}
@@ -175,20 +175,10 @@
                                         <button class="btn btn-primary w-100" type="submit">Create Account</button>
                                     </div>
                                     <div class="col-12">
-                                        <p class="small mb-0">Already have an account? <a href="pages-login.html">Log
+                                        <p class="small mb-0">Already have an account? <a href="{% url 'account_login' %}">Log
                                             in</a></p>
                                     </div>
                                 </form>
-
-                                <div class="col-12 mt-3">
-                                    <p class="small mb-0">
-                                        <a href="{% url 'account_reset_password' %}">Forgot password?</a>
-                                    </p>
-                                    <p class="small mb-0">
-                                        Don't have an account? <a href="{% url 'account_signup' %}">Create an
-                                        account</a>
-                                    </p>
-                                </div>
                             </div>
                         </div>
 

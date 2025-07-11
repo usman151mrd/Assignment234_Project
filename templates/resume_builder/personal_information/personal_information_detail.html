@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Personal Information Details</h2>
+    <dl class="row">
+        <dt class="col-sm-3">Full Name</dt>
+        <dd class="col-sm-9">{{ personal_information.full_name }}</dd>
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">{{ personal_information.email }}</dd>
+        <dt class="col-sm-3">Phone</dt>
+        <dd class="col-sm-9">{{ personal_information.phone }}</dd>
+        <dt class="col-sm-3">Address</dt>
+        <dd class="col-sm-9">{{ personal_information.address }}</dd>
+        <dt class="col-sm-3">Date of Birth</dt>
+        <dd class="col-sm-9">{{ personal_information.date_of_birth }}</dd>
+        <dt class="col-sm-3">Profile Photo</dt>
+        <dd class="col-sm-9">{% if personal_information.profile_photo %}<img src="{{ personal_information.profile_photo.url }}" alt="Profile Photo" width="80">{% else %}-{% endif %}</dd>
+    </dl>
+    <a href="{% url 'resume_builder:personal_information_update' personal_information.pk %}" class="btn btn-warning">Edit</a>
+    <a href="{% url 'resume_builder:personal_information_delete' personal_information.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'resume_builder:personal_information_list' %}" class="btn btn-secondary">Back to List</a>
+</div>
+{% endblock %} 

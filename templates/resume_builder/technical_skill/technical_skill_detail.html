@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Technical Skill Details</h2>
+    <dl class="row">
+        <dt class="col-sm-3">Technology</dt>
+        <dd class="col-sm-9">{{ technical_skill.technology }}</dd>
+        <dt class="col-sm-3">Proficiency</dt>
+        <dd class="col-sm-9">{{ technical_skill.get_proficiency_display }}</dd>
+        <dt class="col-sm-3">Years Experience</dt>
+        <dd class="col-sm-9">{{ technical_skill.years_experience }}</dd>
+        <dt class="col-sm-3">Last Used</dt>
+        <dd class="col-sm-9">{{ technical_skill.last_used }}</dd>
+        <dt class="col-sm-3">Project Count</dt>
+        <dd class="col-sm-9">{{ technical_skill.project_count }}</dd>
+        <dt class="col-sm-3">Visible</dt>
+        <dd class="col-sm-9">{{ technical_skill.is_visible|yesno:'Yes,No' }}</dd>
+    </dl>
+    <a href="{% url 'resume_builder:technical_skill_update' technical_skill.pk %}" class="btn btn-warning">Edit</a>
+    <a href="{% url 'resume_builder:technical_skill_delete' technical_skill.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'resume_builder:technical_skill_list' %}" class="btn btn-secondary">Back to List</a>
+</div>
+{% endblock %} 

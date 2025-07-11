@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Personal Information</h2>
+    <a href="{% url 'resume_builder:personal_information_create' %}" class="btn btn-primary mb-3">Add Personal Information</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Date of Birth</th>
+                <th>Profile Photo</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for info in personal_informations %}
+            <tr>
+                <td>{{ info.full_name }}</td>
+                <td>{{ info.email }}</td>
+                <td>{{ info.phone }}</td>
+                <td>{{ info.address }}</td>
+                <td>{{ info.date_of_birth }}</td>
+                <td>{% if info.profile_photo %}<img src="{{ info.profile_photo.url }}" alt="Profile Photo" width="40">{% else %}-{% endif %}</td>
+                <td>
+                    <a href="{% url 'resume_builder:personal_information_detail' info.pk %}" class="btn btn-sm btn-info">View</a>
+                    <a href="{% url 'resume_builder:personal_information_update' info.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'resume_builder:personal_information_delete' info.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">No personal information found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

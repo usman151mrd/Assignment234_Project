@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Edit Language{% else %}Add Language{% endif %} - Resume Builder{% endblock %}
+{% block page_title %}{% if object %}Edit Language{% else %}Add Language{% endif %}{% endblock %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'resume_builder:language_list' %}">Languages</a></li>
+<li class="breadcrumb-item active">{% if object %}Edit{% else %}Add{% endif %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{% if object %}Edit Language{% else %}Add New Language{% endif %}</h5>
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.resume.id_for_label }}" class="form-label">Resume *</label>
+                            {{ form.resume }}
+                            {% if form.resume.errors %}<div class="invalid-feedback d-block">{{ form.resume.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">Language Name *</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}<div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.proficiency.id_for_label }}" class="form-label">Proficiency *</label>
+                            {{ form.proficiency }}
+                            {% if form.proficiency.errors %}<div class="invalid-feedback d-block">{{ form.proficiency.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.certification.id_for_label }}" class="form-label">Certification</label>
+                            {{ form.certification }}
+                            {% if form.certification.errors %}<div class="invalid-feedback d-block">{{ form.certification.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+                    <div class="form-check mb-3">
+                        {{ form.is_visible }}
+                        <label class="form-check-label" for="{{ form.is_visible.id_for_label }}">Visible on resume</label>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'resume_builder:language_list' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to List</a>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> {% if object %}Update Language{% else %}Add Language{% endif %}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formFields = document.querySelectorAll('input, select, textarea');
+        formFields.forEach(field => {
+            if (!field.classList.contains('form-check-input')) {
+                field.classList.add('form-control');
+            }
+        });
+    });
+</script>
+{% endblock %} 

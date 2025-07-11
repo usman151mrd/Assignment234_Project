@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Technical Skills</h2>
+    <a href="{% url 'resume_builder:technical_skill_create' %}" class="btn btn-primary mb-3">Add Technical Skill</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Technology</th>
+                <th>Proficiency</th>
+                <th>Years Experience</th>
+                <th>Last Used</th>
+                <th>Project Count</th>
+                <th>Visible</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for skill in technical_skills %}
+            <tr>
+                <td>{{ skill.technology }}</td>
+                <td>{{ skill.get_proficiency_display }}</td>
+                <td>{{ skill.years_experience }}</td>
+                <td>{{ skill.last_used }}</td>
+                <td>{{ skill.project_count }}</td>
+                <td>{{ skill.is_visible|yesno:'Yes,No' }}</td>
+                <td>
+                    <a href="{% url 'resume_builder:technical_skill_detail' skill.pk %}" class="btn btn-sm btn-info">View</a>
+                    <a href="{% url 'resume_builder:technical_skill_update' skill.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'resume_builder:technical_skill_delete' skill.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">No technical skills found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

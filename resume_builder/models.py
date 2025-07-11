@@ -72,6 +72,26 @@ class Resume(models.Model):
         return f"{self.user.email} – {self.title}"
 
 
+class PersonalInformation(models.Model):
+    """Personal information for a resume (one per resume)"""
+    resume = models.OneToOneField(
+        Resume,
+        on_delete=models.CASCADE,
+        related_name='personal_information'
+    )
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.full_name} ({self.resume.title})"
+
+
 class ResumeSection(models.Model):
     """Flexible sections for custom resume layouts"""
     SECTION_TYPES = [

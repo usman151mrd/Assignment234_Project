@@ -10,3 +10,8 @@ drf-spectacular
 drf-spectacular[sidecar]
 pillow
 django-allauth
+reportlab
+python-docx
+xhtml2pdf 
+django-weasyprint
+django-taggit

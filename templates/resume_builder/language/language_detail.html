@@ -1,0 +1,34 @@
+{% extends 'resume_base.html' %}
+
+{% block title %}
+{{ language.name }} Detail - Resume Builder
+{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4>{{ language.name }}</h4>
+            <div>
+                <a href="{% url 'web:language_update' pk=language.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                <a href="{% url 'web:language_delete' pk=language.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Language Name:</dt>
+                <dd class="col-sm-9">{{ language.name }}</dd>
+
+                <dt class="col-sm-3">Proficiency:</dt>
+                <dd class="col-sm-9">{{ language.proficiency }}</dd>
+
+
+            </dl>
+           
+        </div>
+    </div>
+</div>
+{% endblock %}

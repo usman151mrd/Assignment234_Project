@@ -22,18 +22,17 @@ from django.conf.urls.static import static
 
 web_patterns = [
     path('admin/', admin.site.urls),
-    # resume_builder web URLs
     path('web/', include('resume_builder.web.urls')),
     path('web/', include('accounts.web.urls')),
     path('', include('dashboard.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('resume/', include('resume_builder.web.urls', namespace='web')),
 ]
 apis_patterns = [
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/v1/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/v1/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    # resume_builder API URLs
     path('api/v1/', include('resume_builder.api.urls')),
-    # accounts API URLs
     path('api/v1/', include('accounts.api.urls')),
 ]
 

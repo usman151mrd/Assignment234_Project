@@ -1,0 +1,28 @@
+
+{% extends 'resume_base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Language{% else %}Add Language{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>{% if form.instance.pk %}Edit Language{% else %}Add Language{% endif %}</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Save</button>
+                {% if form.instance.pk %}
+                    <a href="{% url 'web:language_detail' pk=form.instance.pk %}" class="btn btn-secondary">Cancel</a>
+                {% else %}
+                    <a href="{% url 'web:resume_detail' pk=resume.pk %}" class="btn btn-secondary">Cancel</a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -19,7 +19,7 @@ env = environ.Env(
 )
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'rest_framework',
     'djoser',
+    'django.contrib.sites', 
+    'allauth.socialaccount',
     'allauth',
     'allauth.account',
     'accounts.apps.AccountsConfig',
@@ -50,17 +52,16 @@ INSTALLED_APPS = [
     'interviews.apps.InterviewsConfig',
     'jobs.apps.JobsConfig',
     'recommendations.apps.RecommendationsConfig',
-    'resume_builder.apps.ResumeBuilderConfig',
     'dashboard.apps.DashboardConfig',
+    'resume_builder',
 ]
-
+SITE_ID = 1 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # Add Allauth middleware here
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -100,8 +101,7 @@ DATABASES = {
     }
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -119,8 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+
 
 LANGUAGE_CODE = 'en-us'
 
@@ -130,8 +129,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -154,7 +152,6 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
     'AUTHENTICATION_WHITELIST': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
     ],
     'SWAGGER_UI_SETTINGS': {
         'deepLinking': True,
@@ -186,15 +183,11 @@ DJOSER = {
 }
 AUTH_USER_MODEL = 'accounts.User'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
 STATIC_URL = 'static/'
 
 
-# Directory where collectstatic will collect static files for production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Additional locations the staticfiles app will traverse
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
@@ -204,23 +197,39 @@ SIMPLE_JWT = {
 }
 
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-    # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_URL = '/web/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+
 
 ACCOUNT_FORMS = {
     'signup': 'accounts.forms.CustomSignupForm',
 }
 
 # Looking to send emails in production? Check out our Email API/SMTP product!
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = 'f0cb0b9d536e42'
-EMAIL_HOST_PASSWORD = '588663c1d79800'
-EMAIL_PORT = '2525'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587 
+EMAIL_USE_TLS = True 
+EMAIL_HOST_USER = 'iqraranjha2021@gmail.com' 
+EMAIL_HOST_PASSWORD = 'plba vpcz heiz pfcx' 
+DEFAULT_FROM_EMAIL = 'Diamond Resume' 
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/web/resumes/'
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*'] 
+ACCOUNT_LOGIN_METHODS = ['email']
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_PASSWORD_REQUIRED = True
+
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory' 
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True 
+# # ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True 
+# ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+ACCOUNT_EMAIL_SUBJECT_PREFIX = 'Diamond Resume ' 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'

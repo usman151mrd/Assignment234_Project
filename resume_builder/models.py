@@ -4,11 +4,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
-# -----------------------------
-# Resume Builder Models
-# -----------------------------
 class ResumeTemplate(models.Model):
-    """Template with versioning, configuration and format type"""
     TEMPLATE_FORMATS = [
         ('CLASSIC', 'Classic'),
         ('MODERN', 'Modern'),
@@ -34,7 +30,6 @@ class ResumeTemplate(models.Model):
 
 
 class Resume(models.Model):
-    """Central resume model with slug, tags, language and visibility"""
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -44,12 +39,13 @@ class Resume(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=300, unique=True)
     summary = models.TextField(blank=True)
-    tags = models.JSONField(default=list, blank=True)
+    tags = models.TextField(blank=True)
     template = models.ForeignKey(
         ResumeTemplate,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='resumes'
+        related_name='resumes',
+        blank=True
     )
     language = models.CharField(max_length=7, default='en')
     visibility = models.CharField(
@@ -69,11 +65,10 @@ class Resume(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.email} – {self.title}"
+        return f"{self.user.email} - {self.title}"
 
 
 class ResumeSection(models.Model):
-    """Flexible sections for custom resume layouts"""
     SECTION_TYPES = [
         ('PERSONAL', 'Personal Information'),
         ('SUMMARY', 'Summary'),
@@ -99,7 +94,6 @@ class ResumeSection(models.Model):
 
 
 class WorkExperience(models.Model):
-    """Consolidated work experience with achievements and technologies"""
     resume = models.ForeignKey(
         Resume,
         on_delete=models.CASCADE,
@@ -112,7 +106,7 @@ class WorkExperience(models.Model):
     end_date = models.DateField(null=True, blank=True)
     is_current = models.BooleanField(default=False)
     description = models.TextField(blank=True)
-    achievements = models.JSONField(default=list, blank=True)
+    achievements = models.TextField(blank=True)
     technologies = models.ManyToManyField('Technology', related_name='experiences', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -129,7 +123,6 @@ class WorkExperience(models.Model):
 
 
 class TechnicalSkill(models.Model):
-    """Link Technology to Resume with proficiency levels"""
     PROGRESS_LEVELS = [
         (20, 'Basic'),
         (40, 'Beginner'),
@@ -142,10 +135,9 @@ class TechnicalSkill(models.Model):
         on_delete=models.CASCADE,
         related_name='technical_skills'
     )
-    technology = models.ForeignKey(
-        'Technology',
-        on_delete=models.CASCADE,
-        related_name='skill_entries'
+    technology = models.CharField( 
+        max_length=100, 
+        help_text="Enter the technology name"
     )
     proficiency = models.PositiveIntegerField(
         choices=PROGRESS_LEVELS,
@@ -162,18 +154,17 @@ class TechnicalSkill(models.Model):
         verbose_name = 'Technical Skill'
         verbose_name_plural = 'Technical Skills'
         unique_together = ('resume', 'technology')
-        ordering = ['-proficiency', 'technology__name']
+        ordering = ['-proficiency', 'technology']
         indexes = [
             models.Index(fields=['proficiency']),
             models.Index(fields=['resume', 'technology']),
         ]
 
     def __str__(self):
-        return f"{self.technology.name} – {self.get_proficiency_display()}"
+        return f"{self.technology.name} - {self.get_proficiency_display()}"
 
 
 class Education(models.Model):
-    """Validated education entries with date constraints"""
     resume = models.ForeignKey(
         Resume,
         on_delete=models.CASCADE,
@@ -208,29 +199,23 @@ class Education(models.Model):
 
 
 class Technology(models.Model):
-    """Normalized technology/skill reference"""
-    CATEGORIES = [
-        ('LANG', 'Programming Language'),
-        ('FRAMEWORK', 'Framework'),
-        ('TOOL', 'Development Tool'),
-        ('CLOUD', 'Cloud Platform'),
-        ('DB', 'Database'),
-    ]
+    resume = models.ForeignKey(
+        Resume,
+        on_delete=models.CASCADE,
+        related_name='technologies',
+        db_index=True,
+        null=True,
+        blank=True
+    )
     name = models.CharField(max_length=100, unique=True)
-    category = models.CharField(max_length=20, choices=CATEGORIES)
-    icon = models.CharField(max_length=100, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = 'Technologies'
-        ordering = ['name']
+    category = models.CharField(max_length=50, blank=True, null=True)
+    icon = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name} (for {self.resume.title if self.resume else 'N/A'})"
 
 
 class Project(models.Model):
-    """Enhanced project model with technology M2M"""
     resume = models.ForeignKey(
         Resume,
         on_delete=models.CASCADE,
@@ -241,8 +226,8 @@ class Project(models.Model):
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     description = models.TextField()
-    technologies = models.ManyToManyField(Technology, related_name='projects', blank=True)
-    outcomes = models.JSONField(default=dict, blank=True)
+    technologies = models.TextField(blank=True, default='')
+    outcomes = models.TextField()
     url = models.URLField(blank=True)
     is_active = models.BooleanField(default=True)
 
@@ -256,16 +241,11 @@ class Project(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.title} – {self.role}"
+        return f"{self.title} - {self.role}"
 
 
 class Certification(models.Model):
-    """Certification entries linked to technologies"""
-    resume = models.ForeignKey(
-        Resume,
-        on_delete=models.CASCADE,
-        related_name='certifications'
-    )
+    resume = models.ForeignKey(Resume, on_delete=models.CASCADE, related_name='certifications')
     name = models.CharField(max_length=255)
     issuer = models.CharField(max_length=255)
     issue_date = models.DateField()
@@ -282,7 +262,6 @@ class Certification(models.Model):
 
 
 class Award(models.Model):
-    """Awards and honors linked to resumes"""
     resume = models.ForeignKey(
         Resume,
         on_delete=models.CASCADE,
@@ -300,7 +279,7 @@ class Award(models.Model):
         ]
     )
     description = models.TextField(blank=True)
-    impact_metrics = models.JSONField(default=dict, blank=True)
+    impact_metrics = models.TextField()
     is_visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -313,7 +292,6 @@ class Award(models.Model):
 
 
 class Language(models.Model):
-    """Language proficiencies linked to resumes"""
     resume = models.ForeignKey(
         Resume,
         on_delete=models.CASCADE,

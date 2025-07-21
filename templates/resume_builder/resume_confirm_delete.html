@@ -1,0 +1,29 @@
+{% extends 'resume_base.html' %}
+
+{% block title %}
+Confirm Delete Resume - Resume Builder
+{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4>Confirm Deletion</h4>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete the resume <strong>{{ object.title }}</strong>?</p>
+            <div class="alert alert-warning" role="alert">
+                <strong>Warning:</strong> Deleting this resume will also delete all associated work experiences, education entries, projects, certifications, awards, languages, and technical skills linked to it. This action cannot be undone.
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger me-2">Delete Resume Permanently</button>
+                <a href="{% url 'web:resume_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

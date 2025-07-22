@@ -1,0 +1,60 @@
+{% extends 'resume_base.html' %}
+
+{% block title %}
+{{ certification.name }} Detail - Resume Builder
+{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+           
+            <h4>{{ certification.name }}</h4>
+            <div>
+                <a href="{% url 'web:certification_update' pk=certification.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                <a href="{% url 'web:certification_delete' pk=certification.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Certification Name:</dt>
+                <dd class="col-sm-9">{{ certification.name }}</dd>
+
+                <dt class="col-sm-3">Issuing Organization:</dt>
+                <dd class="col-sm-9">{{ certification.issuing_organization }}</dd>
+
+                <dt class="col-sm-3">Issue Date:</dt>
+                <dd class="col-sm-9">{{ certification.issue_date|date:"F d, Y" }}</dd>
+
+                {% if certification.expiration_date %}
+                <dt class="col-sm-3">Expiration Date:</dt>
+                <dd class="col-sm-9">{{ certification.expiration_date|date:"F d, Y" }}</dd>
+                {% endif %}
+
+                {% if certification.credential_id %}
+                <dt class="col-sm-3">Credential ID:</dt>
+                <dd class="col-sm-9">{{ certification.credential_id }}</dd>
+                {% endif %}
+
+                {% if certification.credential_url %}
+                <dt class="col-sm-3">Credential URL:</dt>
+                <dd class="col-sm-9"><a href="{{ certification.credential_url }}" target="_blank">{{ certification.credential_url }}</a></dd>
+                {% endif %}
+
+                <dt class="col-sm-3">Description:</dt>
+                <dd class="col-sm-9">
+                    {% if certification.description %}
+                        <p>{{ certification.description|linebreaksbr }}</p>
+                    {% else %}
+                        <p>No description provided.</p>
+                    {% endif %}
+                </dd>
+            </dl>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ resume.title }} - Classic Template</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border: 1px solid #ddd; }
+        h1, h2, h3 { color: #0056b3; }
+        .section { margin-bottom: 20px; }
+        .section-title { border-bottom: 2px solid #0056b3; padding-bottom: 5px; margin-bottom: 15px; }
+        .item-title { font-weight: bold; }
+        .item-subtitle { font-style: italic; color: #666; }
+        ul { list-style-type: disc; margin-left: 20px; }
+        ul.no-bullets { list-style-type: none; margin-left: 0; padding-left: 0; }
+        .contact-info { text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="contact-info">
+            <h1>{{ resume.user.first_name }} {{ resume.user.last_name }}</h1>
+            <p>{{ resume.user.email }} | {{ resume.user.profile.phone_number|default:"N/A" }} | {{ resume.user.profile.linkedin_url|default:"N/A" }}</p>
+        </div>
+
+        {% if resume.summary %}
+        <div class="section">
+            <h2 class="section-title">Summary</h2>
+            <p>{{ resume.summary|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+
+        {% if work_experiences %}
+        <div class="section">
+            <h2 class="section-title">Work Experience</h2>
+            {% for exp in work_experiences %}
+            <div>
+                <h3 class="item-title">{{ exp.job_title }} at {{ exp.company }}</h3>
+                <p class="item-subtitle">{{ exp.start_date|date:"F Y" }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date|date:"F Y" }}{% endif %}</p>
+                <p>{{ exp.description|linebreaksbr }}</p>
+                {% if exp.achievements %}
+                    <ul class="no-bullets">
+                        {% for achievement in exp.achievements %}
+                            <li>• {{ achievement }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if exp.technologies.exists %}
+                    <p><small>Technologies: {% for tech in exp.technologies.all %}{{ tech.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</small></p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if educations %}
+        <div class="section">
+            <h2 class="section-title">Education</h2>
+            {% for edu in educations %}
+            <div>
+                <h3 class="item-title">{{ edu.degree }}</h3>
+                <p class="item-subtitle">{{ edu.institution }}, {{ edu.location|default:"N/A" }}</p>
+                <p>{{ edu.start_date|date:"F Y" }} - {{ edu.end_date|date:"F Y" }}</p>
+                {% if edu.gpa %}<p>GPA: {{ edu.gpa }}</p>{% endif %}
+                {% if edu.description %}<p>{{ edu.description|linebreaksbr }}</p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if technical_skills %}
+        <div class="section">
+            <h2 class="section-title">Technical Skills</h2>
+            <ul class="no-bullets">
+                {% for skill in technical_skills %}
+                    <li><strong>{{ skill.technology.name }}:</strong> {{ skill.get_proficiency_display }} ({{ skill.years_experience }} years)</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if projects %}
+        <div class="section">
+            <h2 class="section-title">Projects</h2>
+            {% for project in projects %}
+            <div>
+                <h3 class="item-title">{{ project.title }}</h3>
+                <p class="item-subtitle">Role: {{ project.role }} | {{ project.start_date|date:"F Y" }} - {% if project.end_date %}{{ project.end_date|date:"F Y" }}{% else %}Present{% endif %}</p>
+                <p>{{ project.description|linebreaksbr }}</p>
+                {% if project.technologies.exists %}
+                    <p><small>Technologies: {% for tech in project.technologies.all %}{{ tech.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</small></p>
+                {% endif %}
+                {% if project.url %}<p><a href="{{ project.url }}" target="_blank">Project Link</a></p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if certifications %}
+        <div class="section">
+            <h2 class="section-title">Certifications</h2>
+            {% for cert in certifications %}
+            <div>
+                <h3 class="item-title">{{ cert.name }}</h3>
+                <p class="item-subtitle">Issued by {{ cert.issuer }} on {{ cert.issue_date|date:"F Y" }}</p>
+                {% if cert.expiration_date %}<p>Expires: {{ cert.expiration_date|date:"F Y" }}</p>{% endif %}
+                {% if cert.verification_url %}<p><a href="{{ cert.verification_url }}" target="_blank">Verify Credential</a></p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if awards %}
+        <div class="section">
+            <h2 class="section-title">Awards</h2>
+            {% for award in awards %}
+            <div>
+                <h3 class="item-title">{{ award.title }}</h3>
+                <p class="item-subtitle">Awarded by {{ award.issuer }} on {{ award.issue_date|date:"F Y" }}</p>
+                <p>{{ award.description|linebreaksbr }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if languages %}
+        <div class="section">
+            <h2 class="section-title">Languages</h2>
+            <ul class="no-bullets">
+                {% for lang in languages %}
+                    <li><strong>{{ lang.name }}:</strong> {{ lang.get_proficiency_display }} {% if lang.certification %}({{ lang.certification }}){% endif %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>

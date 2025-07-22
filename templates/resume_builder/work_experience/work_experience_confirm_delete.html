@@ -1,15 +1,26 @@
 {% extends 'resume_base.html' %}
 
 {% block title %}
-Confirm Delete Work Experience—Resume Builder
+Confirm Delete Work Experience - Resume Builder
 {% endblock %}
 
 {% block extra_head %}
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1>Implement Your Logic here</h1>
-  <p>work experience deletes</p>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4>Confirm Deletion</h4>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete the work experience for <strong>{{ object.job_title }}</strong> at <strong>{{ object.company }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger me-2">Delete</button>
+                
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

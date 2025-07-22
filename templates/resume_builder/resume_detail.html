@@ -1,0 +1,231 @@
+{% extends 'resume_base.html' %}
+
+{% block title %}Resume Detail: {{ resume_obj.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4>{{ resume_obj.title }} <small class="text-white-50">({{ resume_obj.language }})</small></h4>
+            <div>
+                <a href="{% url 'web:resume_update' pk=resume_obj.pk %}" class="btn btn-outline-light btn-sm me-2">Edit Resume</a>
+                <a href="{% url 'web:resume_delete' pk=resume_obj.pk %}" class="btn btn-outline-light btn-sm">Delete Resume</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <p><strong>Summary:</strong> {{ resume_obj.summary|default:"No summary provided." }}</p>
+            <p><strong>Tags:</strong> {{ resume_obj.tags|default:"None" }}</p>
+            <p><strong>Visibility:</strong> {{ resume_obj.get_visibility_display }}</p>
+            <p><strong>Template:</strong> {% if resume_obj.template %}{{ resume_obj.template.name }}{% else %}Not Selected <a href="{% url 'web:resume_template_selection' %}?resume_id={{ resume_obj.pk }}" class="btn btn-sm btn-info ms-2">Select Template</a>{% endif %}</p>
+
+            <hr>
+            <a href="{% url 'web:resume_download' pk=resume_obj.pk file_type='docx' %}" class="btn btn-outline-success">Download</a>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary   text-white d-flex justify-content-between align-items-center">
+            <h5>Work Experience</h5>
+            <a href="{% url 'web:work_experience_create' resume_pk=resume_obj.pk %}" class="btn btn-light btn-sm">Add Work Experience</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for exp in work_experiences %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ exp.job_title }}</strong> at {{ exp.company_name }}
+                    <small class="text-muted">({{ exp.start_date }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date }}{% endif %})</small>
+                    <p class="mb-0">{{ exp.description|truncatechars:150 }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'web:work_experience_detail' pk=exp.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:work_experience_update' pk=exp.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:work_experience_delete' pk=exp.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No work experience added yet.</li>
+            {% endfor %}
+        </ul>
+        {% if work_experiences %}
+        <div class="card-footer text-end">
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary   text-white d-flex justify-content-between align-items-center">
+            <h5>Education</h5>
+            <a href="{% url 'web:education_create' resume_pk=resume_obj.pk %}" class="btn btn-light btn-sm">Add Education</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for edu in educations %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ edu.degree }}</strong> in {{ edu.field_of_study }} from {{ edu.institution_name }}
+                    <small class="text-muted">({{ edu.start_date }} - {{ edu.end_date }})</small>
+                    <p class="mb-0">{{ edu.description|truncatechars:150 }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'web:education_detail' pk=edu.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:education_update' pk=edu.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:education_delete' pk=edu.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No education added yet.</li>
+            {% endfor %}
+        </ul>
+        {% if educations %}
+        <div class="card-footer text-end">
+           
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary   text-white d-flex justify-content-between align-items-center">
+            <h5>Projects</h5>
+            <a href="{% url 'web:project_create' resume_pk=resume_obj.pk %}" class="btn btn-light btn-sm">Add Project</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for project in projects %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ project.title }}</strong>
+                    <p class="mb-0">{{ project.description|truncatechars:150 }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'web:project_detail' pk=project.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:project_update' pk=project.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:project_delete' pk=project.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No projects added yet.</li>
+            {% endfor %}
+        </ul>
+        {% if projects %}
+        <div class="card-footer text-end">
+           
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary   text-white d-flex justify-content-between align-items-center">
+            <h5>Certifications</h5>
+            <a href="{% url 'web:certification_create' resume_pk=resume_obj.pk %}" class="btn btn-light btn-sm">Add Certification</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for cert in certifications %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ cert.name }}</strong> from {{ cert.issuing_organization }}
+                    <small class="text-muted">({{ cert.issue_date }})</small>
+                    <p class="mb-0">Credential: {{ cert.credential_id }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'web:certification_detail' pk=cert.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:certification_update' pk=cert.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:certification_delete' pk=cert.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No certifications added yet.</li>
+            {% endfor %}
+        </ul>
+        {% if certifications %}
+        <div class="card-footer text-end">
+           
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary   text-white d-flex justify-content-between align-items-center">
+            <h5>Awards</h5>
+            <a href="{% url 'web:award_create' resume_pk=resume_obj.pk %}" class="btn btn-light btn-sm">Add Award</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for award in awards %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ award.name }}</strong> from {{ award.issuing_organization }}
+                    <small class="text-muted">({{ award.issue_date }})</small>
+                    <p class="mb-0">{{ award.description|truncatechars:150 }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'web:award_detail' pk=award.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:award_update' pk=award.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:award_delete' pk=award.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No awards added yet.</li>
+            {% endfor %}
+        </ul>
+        {% if awards %}
+        <div class="card-footer text-end">
+           
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary   text-white d-flex justify-content-between align-items-center">
+            <h5>Languages</h5>
+            <a href="{% url 'web:language_create' resume_pk=resume_obj.pk %}" class="btn btn-light btn-sm">Add Language</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for lang in languages %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ lang.name }}</strong> ({{ lang.get_proficiency_display }})
+                </div>
+                <div>
+                    <a href="{% url 'web:language_detail' pk=lang.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:language_update' pk=lang.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:language_delete' pk=lang.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No languages added yet.</li>
+            {% endfor %}
+        </ul>
+        {% if languages %}
+        <div class="card-footer text-end">
+           
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary   text-white d-flex justify-content-between align-items-center">
+            <h5>Technical Skills</h5>
+            <a href="{% url 'web:technical_skill_create' resume_pk=resume_obj.pk %}" class="btn btn-light btn-sm">Add Technical Skill</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for skill in technical_skills %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ skill.name }}</strong> ({{ skill.get_proficiency_display }})
+                </div>
+                <div>
+                    <a href="{% url 'web:technical_skill_detail' pk=skill.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:technical_skill_update' pk=skill.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:technical_skill_delete' pk=skill.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No technical skills added yet.</li>
+            {% endfor %}
+        </ul>
+        {% if technical_skills %}
+        <div class="card-footer text-end">
+           
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

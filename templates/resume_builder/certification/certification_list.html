@@ -1,0 +1,36 @@
+
+{% extends 'resume_base.html' %}
+
+{% block title %} Certificates s for {{ resume.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4> Certificates s for <a href="{% url 'web:resume_detail' pk=resume.pk %}" class="text-white">{{ resume.title }}</a></h4>
+            <a href="{% url 'web:certificate_create' resume_pk=resume.pk %}" class="btn btn-light btn-sm">Add New  Certificates </a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for exp in certificates %} 
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ exp.job_title }}</strong> at {{ exp.company_name }}
+                    <small class="text-muted">({{ exp.start_date }} - {% if exp.is_current %}Present{% else %}{{ exp.end_date }}{% endif %})</small>
+                    <p class="mb-0">{{ exp.description|truncatechars:150 }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'web:certificate_detail' pk=exp.pk %}" class="btn btn-info btn-sm me-2">View</a>
+                    <a href="{% url 'web:certificate_update' pk=exp.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'web:certificate_delete' pk=exp.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+            </li>
+            {% empty %}
+            <li class="list-group-item text-muted">No  Certificates  added for this resume yet.</li>
+            {% endfor %}
+        </ul>
+        <div class="card-footer text-end">
+            <a href="{% url 'web:resume_detail' pk=resume.pk %}" class="btn btn-secondary">Back to Resume Details</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

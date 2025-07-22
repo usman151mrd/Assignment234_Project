@@ -1,0 +1,88 @@
+{% extends 'resume_base.html' %}
+
+{% block title %}
+{{ education.degree }} - Resume Builder
+{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4>{{ education.degree }} at {{ education.institution }}</h4>
+            <div>
+                <a href="{% url 'web:education_update' pk=education.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                <a href="{% url 'web:education_delete' pk=education.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Degree:</dt>
+                <dd class="col-sm-9">{{ education.degree }}</dd>
+
+                <dt class="col-sm-3">Field of Study:</dt>
+                <dd class="col-sm-9">{{ education.field_of_study }}</dd>
+
+                <dt class="col-sm-3">Institution:</dt>
+                <dd class="col-sm-9">{{ education.institution }}</dd>
+
+                <dt class="col-sm-3">Location:</dt>
+                <dd class="col-sm-9">{{ education.location|default:"N/A" }}</dd>
+
+                <dt class="col-sm-3">Start Date:</dt>
+                <dd class="col-sm-9">{{ education.start_date|date:"F d, Y" }}</dd>
+
+                <dt class="col-sm-3">End Date:</dt>
+                <dd class="col-sm-9">
+                    {% if education.is_current %}
+                        Present
+                    {% else %}
+                        {{ education.end_date|date:"F d, Y"|default:"N/A" }}
+                    {% endif %}
+                </dd>
+
+                <dt class="col-sm-3">Description:</dt>
+                <dd class="col-sm-9">
+                    {% if education.description %}
+                        <p>{{ education.description|linebreaksbr }}</p>
+                    {% else %}
+                        <p>No description provided.</p>
+                    {% endif %}
+                </dd>
+
+                {% comment %}
+                    Achievements and Technologies are typically not directly linked to Education models.
+                    If your Education model *does* have these, you would uncomment and adjust.
+                    Otherwise, they are removed for a cleaner, education-specific template.
+                {% endcomment %}
+                {% comment %}
+                {% if education.achievements %}
+                    <dt class="col-sm-3">Achievements:</dt>
+                    <dd class="col-sm-9">
+                        <ul>
+                            {% for achievement in education.achievements %}
+                                <li>{{ achievement }}</li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                {% endif %}
+                {% endcomment %}
+
+                {% comment %}
+                {% if education.technologies.exists %}
+                    <dt class="col-sm-3">Technologies Used:</dt>
+                    <dd class="col-sm-9">
+                        {% for tech in education.technologies.all %}
+                            <span class="badge bg-secondary me-1">{{ tech.name }}</span>
+                        {% endfor %}
+                    </dd>
+                {% endif %}
+                {% endcomment %}
+            </dl>
+           
+        </div>
+    </div>
+</div>
+{% endblock %}

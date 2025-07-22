@@ -1,0 +1,76 @@
+{% extends 'resume_base.html' %}
+
+{% block title %}
+{{ experience.job_title }} Detail - Resume Builder
+{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4>{{ experience.job_title }} at {{ experience.company }}</h4>
+            <div>
+                <a href="{% url 'web:award_update' experience.pk %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                <a href="{% url 'web:award_delete' experience.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Job Title:</dt>
+                <dd class="col-sm-9">{{ experience.job_title }}</dd>
+
+                <dt class="col-sm-3">Company:</dt>
+                <dd class="col-sm-9">{{ experience.company }}</dd>
+
+                <dt class="col-sm-3">Location:</dt>
+                <dd class="col-sm-9">{{ experience.location|default:"N/A" }}</dd>
+
+                <dt class="col-sm-3">Start Date:</dt>
+                <dd class="col-sm-9">{{ experience.start_date|date:"F d, Y" }}</dd>
+
+                <dt class="col-sm-3">End Date:</dt>
+                <dd class="col-sm-9">
+                    {% if experience.is_current %}
+                        Present
+                    {% else %}
+                        {{ experience.end_date|date:"F d, Y"|default:"N/A" }}
+                    {% endif %}
+                </dd>
+
+                <dt class="col-sm-3">Description:</dt>
+                <dd class="col-sm-9">
+                    {% if experience.description %}
+                        <p>{{ experience.description|linebreaksbr }}</p>
+                    {% else %}
+                        <p>No description provided.</p>
+                    {% endif %}
+                </dd>
+
+                {% if experience.achievements %}
+                    <dt class="col-sm-3">Achievements:</dt>
+                    <dd class="col-sm-9">
+                        <ul>
+                            {% for achievement in experience.achievements %}
+                                <li>{{ achievement }}</li>
+                            {% endfor %}
+                        </ul>
+                    </dd>
+                {% endif %}
+
+                {% if experience.technologies.exists %}
+                    <dt class="col-sm-3">Technologies Used:</dt>
+                    <dd class="col-sm-9">
+                        {% for tech in experience.technologies.all %}
+                            <span class="badge bg-secondary me-1">{{ tech.name }}</span>
+                        {% endfor %}
+                    </dd>
+                {% endif %}
+            </dl>
+            <a href="{% url 'web:award_list' %}" class="btn btn-secondary mt-3">Back to List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

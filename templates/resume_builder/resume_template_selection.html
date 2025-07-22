@@ -1,0 +1,56 @@
+{% extends 'resume_base.html' %}
+{% block title %}Select Resume Template - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>Select a Template for Resume: <strong>{{ resume.title }}</strong></h4>
+        </div>
+        <div class="card-body">
+            {% if templates %}
+                <form method="post" action="{% url 'web:resume_template_selection' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="resume_id" value="{{ resume.pk }}">
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for template in templates %}
+                        <div class="col">
+                            <div class="card h-100 {% if resume.template == template %}border-primary border-3{% endif %}">
+                                {% if template.thumbnail %}
+                                    <img src="{{ template.thumbnail.url }}" class="card-img-top" alt="{{ template.name }} Thumbnail" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="d-flex justify-content-center align-items-center bg-light" style="height: 200px;">
+                                        No Image
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ template.name }} (v{{ template.version }})</h5>
+                                    <p class="card-text">{{ template.description|default:"No description provided."|truncatechars:100 }}</p>
+                                    <p class="card-text"><small class="text-muted">Format: {{ template.get_format_type_display }}</small></p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="template_id" id="template{{ template.pk }}" value="{{ template.pk }}" {% if resume.template == template %}checked{% endif %}>
+                                        <label class="form-check-label" for="template{{ template.pk }}">
+                                            {% if resume.template == template %}Currently Selected{% else %}Select This Template{% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">Save Template Selection</button>
+                        <a href="{% url 'web:resume_detail' resume.pk %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    No resume templates are available.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

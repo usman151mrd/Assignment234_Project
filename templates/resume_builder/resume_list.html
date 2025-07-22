@@ -1,0 +1,43 @@
+{% extends 'resume_base.html' %}
+{% block title %}My Resumes - Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>My Resumes</h3>
+        <a href="{% url 'web:resume_create' %}" class="btn btn-primary">Create New Resume</a>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            {% if resumes %}
+            <ul class="list-group">
+                {% for resume in resumes %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>{{ resume.title }}</h5>
+                        <small class="text-muted">Last Modified: {{ resume.last_modified|date:"F d, Y H:i" }}</small><br>
+                        <small class="text-muted">Template: {{ resume.template.name|default:"Not Selected" }}</small>
+                    </div>
+                    <div>
+                        <a href="{% url 'web:resume_detail' resume.pk %}" class="btn btn-sm btn-info me-2">View</a>
+                        <a href="{% url 'web:resume_update' resume.pk %}" class="btn btn-sm btn-warning me-2">Edit Info</a>
+                        <a href="{% url 'web:resume_template_selection' %}?resume_id={{ resume.pk }}" class="btn btn-sm btn-dark me-2">Select Template</a>
+                        <div class="btn-group">
+                          
+                                <a class="btn btn-sm btn-success ms-2" href="{% url 'web:resume_download' resume.pk 'docx' %}">Download</a>
+                            
+                        </div>
+                        <a href="{% url 'web:resume_delete' resume.pk %}" class="btn btn-sm btn-danger ms-2">Delete</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                You haven't created any resumes yet. <a href="{% url 'web:resume_create' %}" class="alert-link">Create your first resume!</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

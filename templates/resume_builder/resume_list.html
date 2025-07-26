@@ -1,0 +1,148 @@
+{% extends 'resume_base.html' %}
+{% load static %}
+
+{% block title %}
+My Resumes - Resume Builder
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <!-- Page Title -->
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+        <div>
+            <h1>My Resumes</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Resumes</li>
+                </ol>
+            </nav>
+        </div>
+        <div>
+            <a href="{% url 'resume_builder_web:resume_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create New Resume
+            </a>
+        </div>
+    </div>
+
+    <!-- Resume List -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-file-earmark-text"></i> Your Resumes
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if resumes %}
+                        <div class="row">
+                            {% for resume in resumes %}
+                            <div class="col-lg-6 mb-4">
+                                <div class="card border">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="flex-grow-1">
+                                                <h6 class="card-title">{{ resume.title }}</h6>
+                                                <p class="text-muted mb-2">Last updated: {{ resume.last_modified|date:"F j, Y" }}</p>
+                                                {% if resume.summary %}
+                                                    <p class="card-text">{{ resume.summary|truncatewords:20 }}</p>
+                                                {% endif %}
+                                                <div class="d-flex gap-2 mt-3 flex-wrap">
+                                                    <a href="{% url 'resume_builder_web:resume_detail' resume.pk %}" class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-eye"></i> View
+                                                    </a>
+                                                    <a href="{% url 'resume_builder_web:resume_download_pdf' resume.pk %}" class="btn btn-danger btn-sm">
+                                                        <i class="bi bi-file-pdf"></i> PDF
+                                                    </a>
+                                                    <a href="{% url 'resume_builder_web:resume_download_docx' resume.pk %}" class="btn btn-success btn-sm">
+                                                        <i class="bi bi-file-word"></i> DOCX
+                                                    </a>
+                                                    <form method="post" action="{% url 'resume_builder_web:select_template' %}" class="d-flex align-items-center gap-2">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="resume_id" value="{{ resume.pk }}">
+                                                        <select name="template" class="form-select form-select-sm" style="width: auto;">
+                                                            <option value="classic">Classic</option>
+                                                            <option value="creative">Creative</option>
+                                                            <option value="minimal">Minimal</option>
+                                                            <option value="modern">Modern</option>
+                                                            <option value="technical">Technical</option>
+                                                        </select>
+                                                        <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                                            <i class="bi bi-display"></i> Preview
+                                                        </button>
+                                                    </form>
+
+                                                    <form method="post" action="{% url 'resume_builder_web:resume_delete' resume.pk %}" style="display:inline;">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this resume?');">
+                                                            <i class="bi bi-trash"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="bi bi-file-earmark-text" style="font-size: 4rem; color: #ccc;"></i>
+                            <h4 class="mt-3">No Resumes Found</h4>
+                            <p class="text-muted">You haven't created any resumes yet. Start building your professional resume!</p>
+                            <div class="mt-4">
+                                <a href="{% url 'resume_builder_web:resume_create' %}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-plus-circle"></i> Start Building Resume
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    {% if resumes %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:personal_information_create' %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-person-plus"></i><br>
+                                Add Personal Info
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:work_experience_create' %}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-briefcase-fill"></i><br>
+                                Add Experience
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:education_create' %}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-mortarboard-fill"></i><br>
+                                Add Education
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:technical_skill_create' %}" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-code-square"></i><br>
+                                Add Skills
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

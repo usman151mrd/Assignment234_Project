@@ -1,0 +1,37 @@
+{% extends 'resume_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header">
+            <h3>Education Details</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Degree:</strong> {{ education.degree }}</p>
+                    <p><strong>Institution:</strong> {{ education.institution }}</p>
+                    <p><strong>Location:</strong> {{ education.location|default:"Not specified" }}</p>
+                    <p><strong>Start Date:</strong> {{ education.start_date }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>End Date:</strong> {{ education.end_date }}</p>
+                    <p><strong>GPA:</strong> {{ education.gpa|default:"Not specified" }}</p>
+                    <p><strong>Visible:</strong> {{ education.is_visible|yesno:"Yes,No" }}</p>
+                </div>
+            </div>
+            {% if education.description %}
+            <div class="mt-3">
+                <h5>Description:</h5>
+                <p>{{ education.description }}</p>
+            </div>
+            {% endif %}
+            <div class="mt-3">
+                <a href="{% url 'education_update' education.pk %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'education_delete' education.pk %}" class="btn btn-danger">Delete</a>
+                <a href="{% url 'education_list' %}" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

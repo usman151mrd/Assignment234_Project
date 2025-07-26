@@ -1,0 +1,52 @@
+{% extends 'resume_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>My Projects</h3>
+        <a href="{% url 'resume_builder_web:project_create' %}" class="btn btn-primary">Add New</a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Role</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proj in projects %}
+                    <tr>
+                        <td>{{ proj.title }}</td>
+                        <td>{{ proj.role }}</td>
+                        <td>{{ proj.start_date }}</td>
+                        <td>{{ proj.end_date|default:"Ongoing" }}</td>
+                        <td>{{ proj.is_active|yesno:"Active,Completed" }}</td>
+                        <td class="d-flex gap-1">
+                            <a href="{% url 'resume_builder_web:project_detail' proj.pk %}" class="btn btn-sm btn-info">View</a>
+                            <a href="{% url 'resume_builder_web:project_update' proj.pk %}" class="btn btn-sm btn-warning">Edit</a>
+
+                            <form action="{% url 'resume_builder_web:project_delete' proj.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this project?');">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6">No projects found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,868 @@
+
+
+
+<div class="resume-container creative-template">
+    {% if personal_info %}
+    <div class="resume-header">
+        <div class="header-background">
+            <div class="gradient-overlay"></div>
+        </div>
+        <div class="header-content">
+            <div class="profile-section">
+                {% if personal_info.profile_picture %}
+                <div class="profile-image">
+                    <img src="{{ personal_info.profile_picture.url }}" alt="{{ personal_info.full_name }}">
+                </div>
+                {% endif %}
+                <div class="profile-info">
+                    <h1 class="candidate-name">{{ personal_info.full_name }}</h1>
+                    <div class="professional-title">Full Stack Developer</div>
+                    <div class="tagline">Passionate about creating innovative solutions</div>
+                </div>
+            </div>
+            <div class="contact-section">
+                <div class="contact-grid">
+                    {% if personal_info.email %}
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-envelope"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">Email</span>
+                            <span class="contact-value">{{ personal_info.email }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if personal_info.phone %}
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-telephone"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">Phone</span>
+                            <span class="contact-value">{{ personal_info.phone }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if personal_info.linkedin_url %}
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-linkedin"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">LinkedIn</span>
+                            <span class="contact-value">LinkedIn Profile</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if personal_info.github_url %}
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-github"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">GitHub</span>
+                            <span class="contact-value">GitHub Profile</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if personal_info.full_address %}
+                <div class="address-section">
+                    <div class="address-icon"><i class="bi bi-geo-alt"></i></div>
+                    <div class="address-text">{{ personal_info.full_address }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="resume-header">
+        <div class="header-background">
+            <div class="gradient-overlay"></div>
+        </div>
+        <div class="header-content">
+            <div class="profile-section">
+                <div class="profile-info">
+                    <h1 class="candidate-name">Your Name</h1>
+                    <div class="professional-title">Full Stack Developer</div>
+                    <div class="tagline">Passionate about creating innovative solutions</div>
+                </div>
+            </div>
+            <div class="contact-section">
+                <div class="contact-grid">
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-envelope"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">Email</span>
+                            <span class="contact-value">your.email@example.com</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-telephone"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">Phone</span>
+                            <span class="contact-value">+1 (555) 123-4567</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-linkedin"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">LinkedIn</span>
+                            <span class="contact-value">LinkedIn Profile</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="bi bi-github"></i></div>
+                        <div class="contact-details">
+                            <span class="contact-label">GitHub</span>
+                            <span class="contact-value">GitHub Profile</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="address-section">
+                    <div class="address-icon"><i class="bi bi-geo-alt"></i></div>
+                    <div class="address-text">Your Address, City, State ZIP</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="resume-body">
+        {% if resume.summary %}
+        <section class="resume-section summary-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-person-badge"></i></div>
+                <h2 class="section-title">About Me</h2>
+            </div>
+            <div class="section-content">
+                <p>{{ resume.summary }}</p>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if work_experiences %}
+        <section class="resume-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-briefcase"></i></div>
+                <h2 class="section-title">Professional Experience</h2>
+            </div>
+            <div class="section-content">
+                <div class="timeline">
+                    {% for experience in work_experiences %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <div class="experience-header">
+                                <h3 class="job-title">{{ experience.job_title }}</h3>
+                                <div class="company-info">
+                                    <span class="company-name">{{ experience.company }}</span>
+                                    {% if experience.location %}<span class="location">📍 {{ experience.location }}</span>{% endif %}
+                                </div>
+                                <div class="experience-period">
+                                    <span class="date-range">
+                                        {{ experience.start_date|date:"M Y" }} - 
+                                        {% if experience.is_current %}Present{% else %}{{ experience.end_date|date:"M Y" }}{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            {% if experience.description %}
+                            <div class="job-description">{{ experience.description }}</div>
+                            {% endif %}
+                            {% if experience.achievements %}
+                            <div class="achievements-section">
+                                <h4 class="achievements-title">Key Achievements:</h4>
+                                <ul class="achievements-list">
+                                    {% for achievement in experience.achievements %}
+                                    <li>{{ achievement }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            {% if experience.technologies.all %}
+                            <div class="technologies-section">
+                                <div class="tech-tags">
+                                    {% for tech in experience.technologies.all %}
+                                    <span class="tech-tag">{{ tech.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if educations %}
+        <section class="resume-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-mortarboard"></i></div>
+                <h2 class="section-title">Education</h2>
+            </div>
+            <div class="section-content">
+                {% for education in educations %}
+                <div class="education-card">
+                    <div class="education-header">
+                        <h3 class="degree">{{ education.degree }}</h3>
+                        <div class="institution-info">
+                            <span class="institution">{{ education.institution }}</span>
+                            {% if education.location %}<span class="location">📍 {{ education.location }}</span>{% endif %}
+                        </div>
+                        <div class="education-details">
+                            <span class="date-range">{{ education.start_date|date:"Y" }} - {{ education.end_date|date:"Y" }}</span>
+                            {% if education.gpa %}<span class="gpa">🎯 GPA: {{ education.gpa }}</span>{% endif %}
+                        </div>
+                    </div>
+                    {% if education.description %}
+                    <div class="education-description">{{ education.description }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if technical_skills %}
+        <section class="resume-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-code-slash"></i></div>
+                <h2 class="section-title">Technical Skills</h2>
+            </div>
+            <div class="section-content">
+                <div class="skills-grid">
+                    {% for skill in technical_skills %}
+                    <div class="skill-card">
+                        <div class="skill-header">
+                            <span class="skill-name">{{ skill.technology.name }}</span>
+                            <span class="skill-level">{{ skill.get_proficiency_display }}</span>
+                        </div>
+                        <div class="skill-progress">
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {{ skill.proficiency }}%"></div>
+                                </div>
+                                <span class="progress-text">{{ skill.proficiency }}%</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if projects %}
+        <section class="resume-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-folder"></i></div>
+                <h2 class="section-title">Featured Projects</h2>
+            </div>
+            <div class="section-content">
+                <div class="projects-grid">
+                    {% for project in projects %}
+                    <div class="project-card">
+                        <div class="project-header">
+                            <h3 class="project-title">{{ project.title }}</h3>
+                            <div class="project-role">{{ project.role }}</div>
+                        </div>
+                        <div class="project-period">
+                            {{ project.start_date|date:"M Y" }} - 
+                            {% if project.end_date %}{{ project.end_date|date:"M Y" }}{% else %}Ongoing{% endif %}
+                        </div>
+                        <div class="project-description">{{ project.description }}</div>
+                        {% if project.technologies.all %}
+                        <div class="project-technologies">
+                            <div class="tech-tags">
+                                {% for tech in project.technologies.all %}
+                                <span class="tech-tag">{{ tech.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if project.url %}
+                        <div class="project-link">
+                            <a href="{{ project.url }}" target="_blank" class="project-url">
+                                <i class="bi bi-box-arrow-up-right"></i> View Project
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if certifications %}
+        <section class="resume-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-award"></i></div>
+                <h2 class="section-title">Certifications</h2>
+            </div>
+            <div class="section-content">
+                <div class="certifications-grid">
+                    {% for cert in certifications %}
+                    <div class="certification-card">
+                        <div class="cert-header">
+                            <h3 class="cert-name">{{ cert.name }}</h3>
+                            <div class="cert-issuer">{{ cert.issuer }}</div>
+                        </div>
+                        <div class="cert-details">
+                            <span class="cert-date">📅 {{ cert.issue_date|date:"M Y" }}</span>
+                            {% if cert.credential_id %}<span class="credential-id">🆔 {{ cert.credential_id }}</span>{% endif %}
+                        </div>
+                        {% if cert.expiration_date %}
+                        <div class="expiration">⏰ Expires: {{ cert.expiration_date|date:"M Y" }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if languages %}
+        <section class="resume-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-translate"></i></div>
+                <h2 class="section-title">Languages</h2>
+            </div>
+            <div class="section-content">
+                <div class="languages-grid">
+                    {% for language in languages %}
+                    <div class="language-card">
+                        <span class="language-name">{{ language.name }}</span>
+                        <span class="language-level">{{ language.get_proficiency_display }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if awards %}
+        <section class="resume-section">
+            <div class="section-header">
+                <div class="section-icon"><i class="bi bi-trophy"></i></div>
+                <h2 class="section-title">Awards & Recognition</h2>
+            </div>
+            <div class="section-content">
+                {% for award in awards %}
+                <div class="award-card">
+                    <div class="award-header">
+                        <h3 class="award-title">{{ award.title }}</h3>
+                        <div class="award-issuer">{{ award.issuer }}</div>
+                    </div>
+                    <div class="award-date">🏆 {{ award.issue_date|date:"M Y" }}</div>
+                    {% if award.description %}
+                    <div class="award-description">{{ award.description }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.creative-template {
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: #2c3e50;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+}
+
+.resume-header {
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 50px 40px;
+    overflow: hidden;
+}
+
+.header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+}
+
+.gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+}
+
+.profile-section {
+    flex: 1;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 4px solid rgba(255,255,255,0.3);
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.candidate-name {
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    letter-spacing: -1px;
+}
+
+.professional-title {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    opacity: 0.9;
+}
+
+.tagline {
+    font-size: 16px;
+    opacity: 0.8;
+    font-style: italic;
+}
+
+.contact-section {
+    flex: 1;
+    max-width: 400px;
+}
+
+.contact-grid {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.contact-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-label {
+    font-size: 12px;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.contact-value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.address-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.address-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.address-text {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.resume-body {
+    padding: 50px 40px;
+}
+
+.resume-section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.section-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.summary-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
+    border-radius: 15px;
+    border-left: 5px solid #667eea;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, #667eea, #764ba2);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    background: #667eea;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px #667eea;
+}
+
+.timeline-content {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border-left: 4px solid #667eea;
+}
+
+.experience-header {
+    margin-bottom: 15px;
+}
+
+.job-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+}
+
+.company-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.company-name {
+    font-weight: 600;
+    color: #667eea;
+}
+
+.location {
+    color: #666;
+    font-size: 14px;
+}
+
+.experience-period {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.job-description {
+    margin-bottom: 15px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.achievements-section {
+    margin-bottom: 15px;
+}
+
+.achievements-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.achievements-list {
+    padding-left: 20px;
+}
+
+.achievements-list li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tech-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.education-card, .project-card, .certification-card, .award-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    border-left: 4px solid #667eea;
+}
+
+.degree, .project-title, .cert-name, .award-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+}
+
+.institution-info, .project-role, .cert-issuer, .award-issuer {
+    color: #667eea;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.education-details, .project-period, .cert-details, .award-date {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.education-description, .project-description, .award-description {
+    color: #555;
+    line-height: 1.6;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.skill-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border-left: 4px solid #667eea;
+}
+
+.skill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.skill-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.skill-level {
+    font-size: 14px;
+    color: #666;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+    min-width: 40px;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.certifications-grid, .languages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.language-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    border-left: 4px solid #667eea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.language-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.language-level {
+    color: #666;
+    font-size: 14px;
+}
+
+.gpa {
+    background: #e8f5e8;
+    color: #2d5a2d;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.credential-id {
+    background: #fff3cd;
+    color: #856404;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.expiration {
+    color: #dc3545;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.project-link {
+    margin-top: 15px;
+}
+
+.project-url {
+    color: #667eea;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 15px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.project-url:hover {
+    background: rgba(102, 126, 234, 0.2);
+    transform: translateY(-2px);
+}
+
+@media print {
+    .creative-template {
+        box-shadow: none;
+        border-radius: 0;
+    }
+    
+    .resume-header {
+        background: #667eea;
+    }
+    
+    .timeline-content, .education-card, .project-card, .certification-card, 
+    .award-card, .skill-card, .language-card {
+        box-shadow: none;
+        border: 1px solid #e9ecef;
+    }
+}
+</style>

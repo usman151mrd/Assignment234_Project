@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from resume_builder.models import ResumeTemplate
 
 from resume_builder.models import (
     ResumeTemplate, Resume, ResumeSection, WorkExperience,

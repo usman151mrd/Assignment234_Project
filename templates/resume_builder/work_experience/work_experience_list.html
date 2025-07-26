@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3>My Work Experiences</h3>
-        <a href="{% url 'work_experience_create' %}" class="btn btn-primary">Add New</a>
+        <a href="{% url 'resume_builder_web:work_experience_create' %}" class="btn btn-success">Add New</a>
     </div>
     <div class="card shadow">
         <div class="card-body">
@@ -26,9 +26,9 @@
                         <td>{{ exp.start_date }}</td>
                         <td>{{ exp.end_date|default:"Present" }}</td>
                         <td>
-                            <a href="{% url 'work_experience_detail' exp.pk %}" class="btn btn-sm btn-info">View</a>
-                            <a href="{% url 'work_experience_update' exp.pk %}" class="btn btn-sm btn-warning">Edit</a>
-                            <a href="{% url 'work_experience_delete' exp.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                            <a href="{% url 'resume_builder_web:work_experience_detail' exp.pk %}" class="btn btn-sm btn-info">View</a>
+                            <a href="{% url 'resume_builder_web:work_experience_update' exp.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'resume_builder_web:work_experience_delete' exp.pk %}" class="btn btn-sm btn-danger">Delete</a>
                         </td>
                     </tr>
                     {% empty %}

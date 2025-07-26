@@ -1,0 +1,50 @@
+{% extends 'resume_base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>My Technical Skills</h3>
+        <a href="{% url 'resume_builder_web:technical_skill_create' %}" class="btn btn-primary">Add New</a>
+    </div>
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Technology</th>
+                        <th>Proficiency</th>
+                        <th>Years Experience</th>
+                        <th>Last Used</th>
+                        <th>Visible</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for skill in technical_skills %}
+                    <tr>
+                        <td>{{ skill.technology }}</td>
+
+                        <td>{{ skill.get_proficiency_display }}</td>
+                        <td>{{ skill.years_experience }}</td>
+                        <td>{{ skill.last_used|default:"Not specified" }}</td>
+                        <td>{{ skill.is_visible|yesno:"Yes,No" }}</td>
+                        <td class="d-flex gap-1">
+                            <a href="{% url 'resume_builder_web:technical_skill_detail' skill.pk %}" class="btn btn-sm btn-info">View</a>
+                            <a href="{% url 'resume_builder_web:technical_skill_update' skill.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{% url 'resume_builder_web:technical_skill_delete' skill.pk %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this skill?');">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6">No technical skills found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

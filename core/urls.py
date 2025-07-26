@@ -19,24 +19,36 @@ from django.urls import path,include
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from django.conf import settings
 from django.conf.urls.static import static
+# core/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from django.conf import settings
+from django.conf.urls.static import static
+from allauth.account import views as allauth_views
 
 web_patterns = [
     path('admin/', admin.site.urls),
-    # resume_builder web URLs
     path('web/', include('resume_builder.web.urls')),
-    path('web/', include('accounts.web.urls')),
+    path('', include('accounts.web.urls')),
     path('', include('dashboard.urls')),
+
+    # Allauth handles login, logout, signup, email verify, etc.
+    path('accounts/', include('allauth.urls')),
+    path("accounts/verification-sent/", allauth_views.email_verification_sent, name="account_email_verification_sent"),
 ]
+
 apis_patterns = [
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/v1/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/v1/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    # resume_builder API URLs
+
     path('api/v1/', include('resume_builder.api.urls')),
-    # accounts API URLs
     path('api/v1/', include('accounts.api.urls')),
 ]
 
 urlpatterns = web_patterns + apis_patterns
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

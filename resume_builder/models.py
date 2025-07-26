@@ -4,24 +4,39 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
+
+
+# resume_builder/web/models.py
+from django.db import models
+from django.utils.text import slugify
+
+
+
 # -----------------------------
 # Resume Builder Models
 # -----------------------------
 class ResumeTemplate(models.Model):
     """Template with versioning, configuration and format type"""
     TEMPLATE_FORMATS = [
-        ('CLASSIC', 'Classic'),
-        ('MODERN', 'Modern'),
-        ('CREATIVE', 'Creative'),
-        ('TECHNICAL', 'Technical'),
+        ('classic', 'Classic'),
+        ('creative', 'Creative'),
+        ('minimal', 'Minimal'),
+        ('modern', 'Modern'),
+        ('technical', 'Technical'),
     ]
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True)
+
     description = models.TextField(blank=True)
     format_type = models.CharField(max_length=20, choices=TEMPLATE_FORMATS)
     thumbnail = models.ImageField(upload_to='resume_templates/', blank=True)
     config = models.JSONField(default=dict, blank=True)
     version = models.PositiveIntegerField(default=1)
     is_active = models.BooleanField(default=True)
+    file_name = models.CharField(
+        max_length=255,
+        default='resume_builder/preview/template_classic.html'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -31,6 +46,7 @@ class ResumeTemplate(models.Model):
 
     def __str__(self):
         return f"{self.name} (v{self.version})"
+
 
 
 class Resume(models.Model):
@@ -44,7 +60,8 @@ class Resume(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=300, unique=True)
     summary = models.TextField(blank=True)
-    tags = models.JSONField(default=list, blank=True)
+    tags = models.TextField(null=True, blank=True)
+
     template = models.ForeignKey(
         ResumeTemplate,
         on_delete=models.SET_NULL,
@@ -86,7 +103,7 @@ class ResumeSection(models.Model):
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE, related_name='sections')
     section_type = models.CharField(max_length=20, choices=SECTION_TYPES)
     title = models.CharField(max_length=100)
-    content = models.JSONField(default=dict, blank=True)
+    content = models.TextField(default="", blank=True)
     order = models.PositiveIntegerField(default=0)
     is_visible = models.BooleanField(default=True)
 
@@ -112,10 +129,18 @@ class WorkExperience(models.Model):
     end_date = models.DateField(null=True, blank=True)
     is_current = models.BooleanField(default=False)
     description = models.TextField(blank=True)
-    achievements = models.JSONField(default=list, blank=True)
+    achievements = models.TextField(blank=True, null=True)
     technologies = models.ManyToManyField('Technology', related_name='experiences', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+
+    def achievement_list(self):
+        """Returns the achievements as a clean list"""
+        if not self.achievements:
+            return []
+        return [item.strip().capitalize() for item in self.achievements.split(',') if item.strip()]
 
     class Meta:
         ordering = ['-start_date']
@@ -128,8 +153,12 @@ class WorkExperience(models.Model):
         return f"{self.job_title} at {self.company}"
 
 
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+
 class TechnicalSkill(models.Model):
     """Link Technology to Resume with proficiency levels"""
+
     PROGRESS_LEVELS = [
         (20, 'Basic'),
         (40, 'Beginner'),
@@ -137,20 +166,23 @@ class TechnicalSkill(models.Model):
         (80, 'Advanced'),
         (100, 'Expert'),
     ]
+
     resume = models.ForeignKey(
-        Resume,
+        'Resume',
         on_delete=models.CASCADE,
         related_name='technical_skills'
     )
-    technology = models.ForeignKey(
-        'Technology',
-        on_delete=models.CASCADE,
-        related_name='skill_entries'
+
+    # Changed from ForeignKey to CharField
+    technology = models.CharField(
+        max_length=100
     )
+
     proficiency = models.PositiveIntegerField(
         choices=PROGRESS_LEVELS,
         validators=[MinValueValidator(20), MaxValueValidator(100)]
     )
+
     years_experience = models.PositiveIntegerField(default=0)
     last_used = models.DateField(null=True, blank=True)
     project_count = models.PositiveIntegerField(default=0)
@@ -161,15 +193,15 @@ class TechnicalSkill(models.Model):
     class Meta:
         verbose_name = 'Technical Skill'
         verbose_name_plural = 'Technical Skills'
-        unique_together = ('resume', 'technology')
-        ordering = ['-proficiency', 'technology__name']
+        ordering = ['-proficiency', 'technology']
         indexes = [
             models.Index(fields=['proficiency']),
             models.Index(fields=['resume', 'technology']),
         ]
 
     def __str__(self):
-        return f"{self.technology.name} – {self.get_proficiency_display()}"
+        return f"{self.technology} – {self.get_proficiency_display()}"
+
 
 
 class Education(models.Model):
@@ -242,7 +274,7 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     description = models.TextField()
     technologies = models.ManyToManyField(Technology, related_name='projects', blank=True)
-    outcomes = models.JSONField(default=dict, blank=True)
+    outcomes = models.TextField(blank=True, null=True)
     url = models.URLField(blank=True)
     is_active = models.BooleanField(default=True)
 
@@ -300,7 +332,7 @@ class Award(models.Model):
         ]
     )
     description = models.TextField(blank=True)
-    impact_metrics = models.JSONField(default=dict, blank=True)
+    impact_metrics = models.TextField(blank=True, null=True)
     is_visible = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -342,3 +374,58 @@ class Language(models.Model):
 
     def get_proficiency_display(self):
         return self.proficiency
+
+
+class PersonalInformation(models.Model):
+    """Personal information for resume"""
+    resume = models.ForeignKey(
+        Resume,
+        on_delete=models.CASCADE,
+        related_name='personal_information'
+    )
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    postal_code = models.CharField(max_length=20, blank=True)
+    linkedin_url = models.URLField(blank=True)
+    github_url = models.URLField(blank=True)
+    portfolio_url = models.URLField(blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    nationality = models.CharField(max_length=100, blank=True)
+    is_visible = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Personal Information'
+        verbose_name_plural = 'Personal Information'
+        unique_together = ('resume',)
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.resume.title}"
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    @property
+    def full_address(self):
+        address_parts = []
+        if self.address:
+            address_parts.append(self.address)
+        if self.city:
+            address_parts.append(self.city)
+        if self.state:
+            address_parts.append(self.state)
+        if self.postal_code:
+            address_parts.append(self.postal_code)
+        if self.country:
+            address_parts.append(self.country)
+        return ', '.join(address_parts) if address_parts else ''

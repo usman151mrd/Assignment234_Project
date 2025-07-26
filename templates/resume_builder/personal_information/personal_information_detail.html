@@ -1,0 +1,38 @@
+{% extends 'resume_base.html' %}
+
+{% block title %}Personal Information Detail–Resume Builder{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Personal Information</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Full Name:</strong> {{ personal_information.full_name }}</p>
+                    <p><strong>Email:</strong> {{ personal_information.email }}</p>
+                    <p><strong>Phone:</strong> {{ personal_information.phone }}</p>
+                    <p><strong>Address:</strong> {{ personal_information.address }}</p>
+                    <p><strong>LinkedIn:</strong> <a href="{{ personal_information.linkedin_url }}" target="_blank">{{ personal_information.linkedin_url }}</a></p>
+                    <p><strong>GitHub:</strong> <a href="{{ personal_information.github_url }}" target="_blank">{{ personal_information.github_url }}</a></p>
+                    <p><strong>Portfolio:</strong> <a href="{{ personal_information.portfolio_url }}" target="_blank">{{ personal_information.portfolio_url }}</a></p>
+                    <p><strong>Date of Birth:</strong> {{ personal_information.date_of_birth }}</p>
+                    <p><strong>Nationality:</strong> {{ personal_information.nationality }}</p>
+                    <p><strong>Visible on Resume:</strong> {{ personal_information.is_visible|yesno:"Yes,No" }}</p>
+                </div>
+                <div class="col-md-6">
+                    {% if personal_information.profile_picture %}
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <img src="{{ personal_information.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded" style="max-width: 200px;">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{% url 'personal_information_update' personal_information.pk %}" class="btn btn-primary">Edit</a>
+    <a href="{% url 'personal_information_list' %}" class="btn btn-secondary">Back to List</a>
+</div>
+{% endblock %} 

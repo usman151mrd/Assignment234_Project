@@ -56,7 +56,18 @@
               <span>{{ user.email }}</span>
             </li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item d-flex align-items-center" href="{% url 'account_email' %}"><i class="bi bi-person"></i><span>My Account</span></a></li>
+            <li>
+                <a class="dropdown-item d-flex align-items-center" href="{% url 'account_email' %}">
+                 <i class="bi bi-person"></i><span>My Account</span>
+                </a>
+            </li>
+
+            <li>
+               <a class="dropdown-item d-flex align-items-center" href="{% url 'account_change_password' %}">
+               <i class="bi bi-key"></i><span>Change Password</span>
+               </a>
+            </li>
+
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item d-flex align-items-center" href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-right"></i><span>Sign Out</span></a></li>
           </ul>
@@ -69,25 +80,57 @@
   <aside id="sidebar" class="sidebar">
     <ul class="sidebar-nav" id="sidebar-nav">
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'dashboard' %}">
-          <i class="bi bi-grid"></i><span>Dashboard</span>
+        <a class="nav-link collapsed" href="{% url 'dashboard' %}">
+            <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if request.path|slice:':8' == '/web/resu' %}active{% else %}collapsed{% endif %}" href="{% url 'resume_builder_web:resume_list' %}">
+            <i class="bi bi-file-earmark-text"></i><span>Resumes</span>
+        </a>
+    </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:personal_information_list' %}">
+          <i class="bi bi-person"></i><span>Personal Information</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'dashboard' %}">
-          <i class="bi bi-file-earmark-text"></i><span>Resumes</span>
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:work_experience_list' %}">
+          <i class="bi bi-briefcase"></i><span>Work Experience</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'dashboard' %}">
-          <i class="bi bi-paperclip"></i><span>Applications</span>
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:education_list' %}">
+          <i class="bi bi-mortarboard"></i><span>Education</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{% url 'dashboard' %}">
-          <i class="bi bi-briefcase"></i><span>Job Listings</span>
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:project_list' %}">
+          <i class="bi bi-folder"></i><span>Projects</span>
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:certification_list' %}">
+          <i class="bi bi-award"></i><span>Certifications</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:award_list' %}">
+          <i class="bi bi-trophy"></i><span>Awards</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:language_list' %}">
+          <i class="bi bi-translate"></i><span>Languages</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'resume_builder_web:technical_skill_list' %}">
+          <i class="bi bi-code-slash"></i><span>Technical Skills</span>
+        </a>
+      </li>
+
       <li class="nav-item">
         <a class="nav-link collapsed" href="{% url 'dashboard' %}">
         </a>
@@ -96,6 +139,16 @@
   </aside>
 
   <main id="main" class="main">
+    {% if messages %}
+      <div class="container mt-3">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
 

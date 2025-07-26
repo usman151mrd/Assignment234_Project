@@ -1,10 +1,62 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>Manage Email Addresses</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
+
+<div class="container py-5">
+  <div class="card shadow">
+    <div class="card-body">
+      <h2 class="card-title mb-4"><i class="bi bi-envelope"></i> Manage Your Email Addresses</h2>
+
+      {% if emailaddresses %}
+        <ul class="list-group mb-4">
+          {% for emailaddress in emailaddresses %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ emailaddress.email }}</strong>
+              {% if emailaddress.verified %}
+                <span class="badge bg-success ms-2">Verified</span>
+              {% else %}
+                <span class="badge bg-danger ms-2">Not Verified</span>
+              {% endif %}
+            </div>
+            {% if not emailaddress.verified %}
+            <form method="post" action="{% url 'account_email' %}" class="d-inline">
+              {% csrf_token %}
+              <input type="hidden" name="email" value="{{ emailaddress.email }}">
+              <button type="submit" name="action_send" class="btn btn-sm btn-warning">
+                <i class="bi bi-arrow-repeat"></i> Resend Verification
+              </button>
+            </form>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <h4 class="mb-3">Add a New Email</h4>
+      <form method="post" action="{% url 'account_email' %}" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-6">
+          {{ form.email.label_tag }}
+          {{ form.email }}
+        </div>
+        <div class="col-md-6 align-self-end">
+          <button type="submit" name="action_add" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Email
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

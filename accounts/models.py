@@ -40,6 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=150, unique=True)
+    #is_email_verified = models.BooleanField(default=False)
     first_name = models.CharField(max_length=150, blank=False, null=False)  # Added field
     last_name = models.CharField(max_length=150, blank=False, null=False)  # Added field
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='candidate')

@@ -1,12 +1,491 @@
-{% extends 'base.html' %}
+{% extends 'resume_base.html' %}
+{% load static %}
 
 {% block title %}
-Sample Page - NiceAdmin
+Dashboard - Resume Builder
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1>Sample dashboard</h1>
-  <p>This is some sample content extending the base template.</p>
+  {% if request.user.is_authenticated %}
+  {% with email_obj=request.user.emailaddress_set.first %}
+    {% if email_obj and not email_obj.verified %}
+      <div class="alert alert-warning d-flex align-items-center mt-3 justify-content-between" role="alert">
+        <div>
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          Your email is&nbsp;<strong>not verified</strong>.
+        </div>
+        <form method="post" action="{% url 'account_email' %}">
+          {% csrf_token %}
+          <button type="submit" name="action_send" class="btn btn-warning btn-sm fw-bold">
+            Verify Email
+          </button>
+        </form>
+      </div>
+    {% else %}
+      <div class="alert alert-success d-flex align-items-center mt-3" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        Your email is&nbsp;<strong>verified</strong>.
+      </div>
+    {% endif %}
+  {% endwith %}
+{% endif %}
+
+<div class="container-fluid">
+    <!-- Page Title -->
+    <div class="pagetitle">
+        <h1>Resume Builder Dashboard</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Home</a></li>
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Welcome Section -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Welcome, {{ user.username }}!</h5>
+                    <p class="card-text">Manage your resume components and build professional resumes with our comprehensive tools.</p>
+                    {% if user_resume %}
+                        <p class="text-success"><i class="bi bi-check-circle"></i> You have {{ resume_count }} resume(s) created.</p>
+                    {% else %}
+                        <p class="text-warning"><i class="bi bi-exclamation-triangle"></i> You haven't created any resumes yet. Start by adding your personal information!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Summary</h5>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 class="text-primary">{{ work_experience_count }}</h4>
+                            <small>Experiences</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-success">{{ education_count }}</h4>
+                            <small>Education</small>
+                        </div>
+                    </div>
+                    <div class="row text-center mt-3">
+                        <div class="col-6">
+                            <h4 class="text-info">{{ project_count }}</h4>
+                            <small>Projects</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-warning">{{ technical_skill_count }}</h4>
+                            <small>Skills</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Section -->
+    {% if user_resume %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="card-title">
+                                <i class="bi bi-file-earmark-text"></i> Your Resume
+                            </h5>
+                            <p class="card-text">View and download your complete resume.</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'resume_builder_web:resume_detail' user_resume.pk %}" class="btn btn-success">
+                                <i class="bi bi-eye"></i> View Resume
+                            </a>
+                            <a href="{% url 'resume_builder_web:resume_download_pdf' user_resume.pk %}" class="btn btn-danger">
+                                <i class="bi bi-file-pdf"></i> Download PDF
+                            </a>
+                            <a href="{% url 'resume_builder_web:resume_download_docx' user_resume.pk %}" class="btn btn-primary">
+                                <i class="bi bi-file-word"></i> Download DOCX
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Stats -->
+    <div class="row">
+        {% if not request.user.emailaddress_set.first.verified %}
+          <div class="col-md-3 mb-3">
+                 <a href="{% url 'account_email' %}" class="btn btn-outline-warning w-100">
+                     <i class="bi bi-envelope-exclamation"></i><br>
+                     Verify Email
+                 </a>
+          </div>
+        {% endif %}
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Personal Info</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ personal_info_count }} entries</h6>
+                            <a href="{% url 'resume_builder_web:personal_information_list' %}" class="btn btn-primary btn-sm">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card revenue-card">
+                <div class="card-body">
+                    <h5 class="card-title">Work Experience</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ work_experience_count }} entries</h6>
+                            <a href="{% url 'resume_builder_web:work_experience_list' %}" class="btn btn-primary btn-sm">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card customers-card">
+                <div class="card-body">
+                    <h5 class="card-title">Education</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-mortarboard"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ education_count }} entries</h6>
+                            <a href="{% url 'resume_builder_web:education_list' %}" class="btn btn-primary btn-sm">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="card info-card sales-card">
+                <div class="card-body">
+                    <h5 class="card-title">Skills</h5>
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-code-slash"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{ technical_skill_count }} entries</h6>
+                            <a href="{% url 'resume_builder_web:technical_skill_list' %}" class="btn btn-primary btn-sm">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CRUD Sections -->
+    <div class="row">
+        <!-- Personal Information Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-person"></i> Personal Information
+                    </h5>
+                    <p class="card-text">Manage your personal details, contact information, and online profiles.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:personal_information_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:personal_information_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Work Experience Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-briefcase"></i> Work Experience
+                    </h5>
+                    <p class="card-text">Track your professional experience, achievements, and career progression.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:work_experience_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:work_experience_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Education Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-mortarboard"></i> Education
+                    </h5>
+                    <p class="card-text">Manage your educational background, degrees, and academic achievements.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:education_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:education_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-folder"></i> Projects
+                    </h5>
+                    <p class="card-text">Showcase your projects, roles, and technical accomplishments.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:project_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:project_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Technical Skills Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-code-slash"></i> Technical Skills
+                    </h5>
+                    <p class="card-text">Manage your technical skills, proficiency levels, and experience.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:technical_skill_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:technical_skill_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Certifications Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-award"></i> Certifications
+                    </h5>
+                    <p class="card-text">Track your professional certifications and credentials.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:certification_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:certification_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Awards Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-trophy"></i> Awards & Honors
+                    </h5>
+                    <p class="card-text">Highlight your achievements, awards, and recognitions.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:award_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:award_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Languages Section -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-translate"></i> Languages
+                    </h5>
+                    <p class="card-text">Manage your language proficiencies and certifications.</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'resume_builder_web:language_list' %}" class="btn btn-primary">View All</a>
+                        <a href="{% url 'resume_builder_web:language_create' %}" class="btn btn-success">Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:personal_information_create' %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-person-plus"></i><br>
+                                Add Personal Info
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:work_experience_create' %}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-briefcase-fill"></i><br>
+                                Add Experience
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:education_create' %}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-mortarboard-fill"></i><br>
+                                Add Education
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'resume_builder_web:technical_skill_create' %}" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-code-square"></i><br>
+                                Add Skills
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Getting Started Guide -->
+    {% if not user_resume %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-lightbulb"></i> Getting Started Guide
+                    </h5>
+                    <div class="alert alert-info">
+                        <h6>Follow these steps to create your first resume:</h6>
+                        <ol class="mb-0">
+                            <li><strong>Add Personal Information:</strong> Start with your basic details, contact info, and online profiles</li>
+                            <li><strong>Add Work Experience:</strong> Include your professional history and achievements</li>
+                            <li><strong>Add Education:</strong> List your academic background and qualifications</li>
+                            <li><strong>Add Technical Skills:</strong> Showcase your technical expertise and proficiency levels</li>
+                            <li><strong>Add Projects:</strong> Highlight your project work and technical accomplishments</li>
+                            <li><strong>Add Certifications & Awards:</strong> Include professional certifications and recognitions</li>
+                            <li><strong>Add Languages:</strong> List your language proficiencies</li>
+                        </ol>
+                    </div>
+                    <div class="text-center">
+                        <a href="{% url 'resume_builder_web:personal_information_create' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-rocket"></i> Start Building Your Resume
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Activity -->
+    {% if recent_work_experience or recent_education or recent_projects or recent_certifications %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-clock-history"></i> Recent Activity
+                    </h5>
+                    <div class="row">
+                        {% if recent_work_experience %}
+                        <div class="col-lg-6">
+                            <h6><i class="bi bi-briefcase"></i> Recent Work Experience</h6>
+                            <div class="list-group list-group-flush">
+                                {% for exp in recent_work_experience %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ exp.job_title }}</strong><br>
+                                        <small class="text-muted">{{ exp.company }}</small>
+                                    </div>
+                                    <a href="{% url 'resume_builder_web:work_experience_detail' exp.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if recent_education %}
+                        <div class="col-lg-6">
+                            <h6><i class="bi bi-mortarboard"></i> Recent Education</h6>
+                            <div class="list-group list-group-flush">
+                                {% for edu in recent_education %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ edu.degree }}</strong><br>
+                                        <small class="text-muted">{{ edu.institution }}</small>
+                                    </div>
+                                    <a href="{% url 'resume_builder_web:education_detail' edu.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row mt-3">
+                        {% if recent_projects %}
+                        <div class="col-lg-6">
+                            <h6><i class="bi bi-folder"></i> Recent Projects</h6>
+                            <div class="list-group list-group-flush">
+                                {% for project in recent_projects %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ project.title }}</strong><br>
+                                        <small class="text-muted">{{ project.role }}</small>
+                                    </div>
+                                    <a href="{% url 'resume_builder_web:project_detail' project.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if recent_certifications %}
+                        <div class="col-lg-6">
+                            <h6><i class="bi bi-award"></i> Recent Certifications</h6>
+                            <div class="list-group list-group-flush">
+                                {% for cert in recent_certifications %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ cert.name }}</strong><br>
+                                        <small class="text-muted">{{ cert.issuer }}</small>
+                                    </div>
+                                    <a href="{% url 'resume_builder_web:certification_detail' cert.pk %}" class="btn btn-sm btn-outline-primary">View</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
